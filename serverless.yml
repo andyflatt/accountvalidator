@@ -1,0 +1,30 @@
+# Account validator serverless configuration
+
+service: validateBankAccount
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: go1.x
+  environment:
+    PROVIDERS: |
+      providers:
+      - name: provider1
+        url: https://provider1.com/v1/api/account/validate
+      - name: provider2
+        url: https://provider2.com/v2/api/account/validate
+   # PROVIDERS: ${ssm:providers}  TODO Configure this with providers and use the serverless environment framework for dev and prod.
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  validateBankAccount:
+    handler: bin/validateBankAccount
+    events:
+      - http:
+          path: application
+          method: post
